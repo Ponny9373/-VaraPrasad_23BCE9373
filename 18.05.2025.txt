@@ -1,0 +1,115 @@
+CREATE TABLE Worker (
+	WORKER_ID INT NOT NULL PRIMARY KEY,
+	FIRST_NAME CHAR(25),
+	LAST_NAME CHAR(25),
+	SALARY INT(15),
+	JOINING_DATE DATETIME,
+	DEPARTMENT CHAR(25)
+);
+use vit;
+INSERT INTO Worker 
+	(WORKER_ID, FIRST_NAME, LAST_NAME, SALARY, JOINING_DATE, DEPARTMENT) VALUES
+		(1, 'Monika', 'Arora', 100000, '2014-02-20 09.00.00', 'HR'),
+		(2, 'Niharika', 'Verma', 80000, '2014-06-11 09.00.00', 'Admin'),
+		(3, 'Vishal', 'Singhal', 300000, '2014-02-20 09.00.00', 'HR'),
+		(4, 'Amitabh', 'Singh', 500000, '2014-02-20 09.00.00', 'Admin'),
+		(5, 'Vivek', 'Bhati', 500000, '2014-06-11 09.00.00', 'Admin'),
+		(6, 'Vipul', 'Diwan', 200000, '2014-06-11 09.00.00', 'Account'),
+		(7, 'Satish', 'Kumar', 75000, '2014-01-20 09.00.00', 'Account'),
+		(8, 'Geetika', 'Chauhan', 90000, '2014-04-11 09.00.00','Admin');
+        
+        use vit;
+        delete from worker;
+        select * from worker;
+        SELECT * FROM Worker WHERE SALARY > 100000;
+        
+        SELECT * FROM Worker WHERE DEPARTMENT = 'Admin' AND SALARY > 100000;
+        
+        SELECT * FROM Worker WHERE DEPARTMENT = 'HR' OR SALARY > 400000;
+        
+        SELECT * FROM Worker WHERE JOINING_DATE BETWEEN '2014-01-01' AND '2014-06-30';
+        
+        SELECT * FROM Worker WHERE DEPARTMENT IN ('Admin', 'Account');
+        
+        SELECT WORKER_ID FROM Worker WHERE SALARY IS NULL;
+        
+        SELECT * FROM Worker WHERE NOT DEPARTMENT = 'HR';
+        
+        SELECT First_name,Last_name FROM Worker w
+WHERE SALARY > (SELECT AVG(SALARY) FROM Worker);
+
+SELECT *, SALARY AS CurrentSalary FROM Worker
+WHERE SALARY > 1.5 * (SELECT MIN(SALARY) FROM Worker);
+
+SELECT * FROM WORKER WHERE DEPARTMENT='HR'OR DEPARTMENT='Admin'AND SALARY <200000;
+
+SELECT * FROM worker WHERE salary < 300000 AND salary > 100000 AND (department='Admin' OR department='Account'); 
+
+SELECT *
+FROM Worker
+WHERE DEPARTMENT IN ('HR', 'Account');
+
+SELECT * FROM Worker WHERE SALARY IN  ( SELECT SALARY FROM Worker WHERE DEPARTMENT = 'Admin');
+
+SELECT * FROM Worker WHERE JOINING_DATE NOT IN ( SELECT JOINING_DATE FROM Worker WHERE DEPARTMENT = 'HR');
+
+SELECT * FROM Worker WHERE WORKER_ID % 2 = 0 AND DEPARTMENT IN ('Admin', 'HR') AND SALARY = ( SELECT MAX(SALARY) FROM Worker WHERE WORKER_ID % 2 = 0 AND DEPARTMENT IN ('Admin', 'HR'));
+
+SELECT MAX(SALARY) AS SecondHighestSalary FROM Worker WHERE DEPARTMENT IN ('Admin', 'HR') AND SALARY < ( SELECT MAX(SALARY) FROM Worker WHERE DEPARTMENT IN ('Admin', 'HR') );
+
+
+
+
+
+USE vit;
+
+CREATE TABLE students (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50),
+    age INT,
+    department VARCHAR(30)
+);
+
+INSERT INTO students (name, age, department) VALUES
+('Rahul', 20, 'CSE'),
+('Anita', 21, 'ECE'),
+('Karan', 22, 'ME'),
+('Sneha', 20, 'CSE'),
+('Meena', 23, 'EEE'),
+('Amit', 21, 'CSE');
+
+DELETE FROM students WHERE id = 1;
+SET SQL_SAFE_UPDATES = 0;
+DELETE FROM students WHERE department = 'ECE';
+DELETE FROM students ORDER BY id DESC LIMIT 1;
+DELETE FROM students;
+
+
+USE vit;
+CREATE TABLE IF NOT EXISTS cse (
+    id INT PRIMARY KEY,
+    name VARCHAR(50)
+);
+START TRANSACTION;
+INSERT INTO cse VALUES (1001, 'Jayanth');
+SAVEPOINT sp1;
+INSERT INTO cse VALUES (1002, 'Nisha');
+DELETE FROM cse WHERE id = 1002;
+ROLLBACK TO sp1;
+COMMIT;
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        
+        
+        
