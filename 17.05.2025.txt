@@ -1,0 +1,27 @@
+drop database vit;
+CREATE DATABASE vit;
+USE vit;
+
+CREATE TABLE vit_ap (
+    student_id VARCHAR(20) PRIMARY KEY,
+    student_name VARCHAR(100)
+);
+
+ALTER TABLE vit_ap ADD COLUMN department VARCHAR(100);
+ALTER TABLE vit_ap ADD COLUMN grad_year INT;
+ALTER TABLE vit_ap ADD COLUMN s_country VARCHAR(10) DEFAULT 'India';
+ALTER TABLE vit_ap ADD COLUMN email VARCHAR(100);
+
+INSERT INTO vit_ap (student_id, student_name, department, grad_year, email) VALUES
+('23BCE9001', 'Arvind Reddy', 'School of Computer Science', 2027, 'arvind.reddy@vitap.ac.in'),
+('23BEC9302', 'Suresh Kumar', 'School of Electrical Engineering', 2027, 'suresh.kumar@vitap.ac.in'),
+('23MEC1003', 'Lakshmi Narayan', 'School of Mechanical Engineering', 2027, 'lakshmi.narayan@vitap.ac.in'),
+('22BCE9804', 'Venkatesh Iyer', 'School of Computer Science', 2026, 'venkatesh.iyer@vitap.ac.in'),
+('23BCE9105', 'Deepa Nair', 'School of Computer Science', 2027, 'deepa.nair@vitap.ac.in'),
+('23ECE9306', 'Kiran Raj', 'School of Electronics Engineering', 2027, 'kiran.raj@vitap.ac.in'),
+('23BCE9373', 'Vara Prasad', 'School of Computer Science', 2027, 'varaprasad@vitap.ac.in'),
+('22BCB9608', 'Ravi Teja', 'School of Business', 2026, 'ravi.teja@vitap.ac.in'),
+('22BEC8409', 'Divya Menon', 'School of Electronics Engineering', 2026, 'divya.menon@vitap.ac.in');
+
+SELECT * FROM vit_ap;
+DESC vit_ap;
