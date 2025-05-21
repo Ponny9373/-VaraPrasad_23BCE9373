@@ -1,0 +1,159 @@
+CREATE TABLE people (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50),
+    age INT
+);
+INSERT INTO people (name, age) VALUES
+('Amit', 18),
+('Priya', 20),
+('Ravi', 22),
+('Sneha', 25),
+('Vikram', 30),
+('Anjali', 35),
+('Raj', 40),
+('Neha', 45);
+select * from people;ALTER TABLE people
+ADD UNIQUE (name, age);
+
+SELECT * FROM people
+WHERE age BETWEEN 20 AND 35;
+
+
+select * from worker;
+
+SELECT SUM(salary)  FROM worker;
+
+SELECT AVG(salary)  FROM worker;
+
+SELECT MAX(salary)  FROM worker;
+
+SELECT MIN(salary)  FROM worker;
+
+SELECT COUNT(*)  FROM worker;
+
+SELECT department, SUM(salary)  FROM worker GROUP BY department;
+
+SELECT department, AVG(salary) FROM worker GROUP BY department;
+
+SELECT MIN(joining_date), MAX(joining_date) FROM worker;
+
+SELECT * FROM worker WHERE salary BETWEEN 80000 AND 300000;
+
+SELECT * FROM worker WHERE joining_date BETWEEN '2014-02-01' AND '2014-06-01';
+
+SELECT * FROM worker WHERE salary NOT BETWEEN 80000 AND 300000;
+
+SELECT * FROM worker WHERE department IN ('HR', 'Admin');
+
+SELECT * FROM worker WHERE department NOT IN ('Account', 'HR');
+
+SELECT  * FROM worker WHERE joining_date NOT BETWEEN '2014-02-01' AND '2014-06-01';
+
+SELECT * FROM worker WHERE worker_id NOT BETWEEN 3 AND 6;
+
+select * from worker;
+
+SELECT * FROM worker WHERE first_name LIKE 'V%';
+
+SELECT * FROM worker WHERE last_name LIKE '%al';
+
+
+SELECT * FROM worker WHERE department LIKE '%dmin%';
+
+SELECT * FROM worker WHERE first_name LIKE '_i%';
+
+SELECT * FROM worker WHERE last_name LIKE '______';
+
+
+
+
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY,
+    CustomerName VARCHAR(100),
+    ContactName VARCHAR(100),
+    Address VARCHAR(255),
+    City VARCHAR(100),
+    PostalCode VARCHAR(20),
+    Country VARCHAR(100)
+);
+INSERT INTO Customers (CustomerID, CustomerName, ContactName, Address, City, PostalCode, Country)
+VALUES
+(1, 'Alfreds Futterkiste', 'Maria Anders', 'Obere Str. 57', 'Berlin', '12209', 'Germany'),
+(2, 'Ana Trujillo Emparedados y helados', 'Ana Trujillo', 'Avda. de la Constitución 2222', 'México D.F.', '05021', 'Mexico'),
+(3, 'Antonio Moreno Taquería', 'Antonio Moreno', 'Mataderos 2312', 'México D.F.', '05023', 'Mexico');
+
+CREATE TABLE Suppliers (
+    SupplierID INT PRIMARY KEY,
+    SupplierName VARCHAR(100),
+    ContactName VARCHAR(100),
+    Address VARCHAR(255),
+    City VARCHAR(100),
+    PostalCode VARCHAR(20),
+    Country VARCHAR(100)
+);
+
+INSERT INTO Suppliers (SupplierID, SupplierName, ContactName, Address, City, PostalCode, Country)
+VALUES
+(1, 'Exotic Liquid', 'Charlotte Cooper', '49 Gilbert St.', 'London', 'EC1 4SD', 'UK'),
+(2, 'New Orleans Cajun Delights', 'Shelley Burke', 'P.O. Box 78934', 'New Orleans', '70117', 'USA'),
+(3, 'Grandma Kelly''s Homestead', 'Regina Murphy', '707 Oxford Rd.', 'Ann Arbor', '48104', 'USA');
+
+SELECT * FROM Customers;
+
+SELECT * FROM Suppliers;
+SELECT City FROM Customers
+UNION
+SELECT City FROM Suppliers
+ORDER BY City;
+
+
+SELECT City, Country FROM Customers
+WHERE Country = 'Germany'
+UNION
+SELECT City, Country FROM Suppliers
+WHERE Country = 'Germany'
+ORDER BY City;
+
+SELECT 
+  CustomerName,
+  Country,
+  CASE 
+    WHEN Country = 'Germany' THEN 'Europe'
+    WHEN Country = 'Mexico' THEN 'North America'
+    ELSE 'Other'
+  END AS Region
+FROM Customers;
+
+SELECT 
+  SupplierName,
+  PostalCode,
+  CASE 
+    WHEN PostalCode LIKE 'EC%' THEN 'London Area'
+    WHEN PostalCode BETWEEN '70000' AND '79999' THEN 'Southern USA'
+    WHEN PostalCode BETWEEN '48000' AND '48999' THEN 'Michigan'
+    ELSE 'Other Region'
+  END AS LocationCategory
+FROM Suppliers;
+
+SELECT 
+  CustomerName,
+  City,
+  CASE 
+    WHEN City = 'Berlin' THEN 'High Priority'
+    WHEN City = 'México D.F.' THEN 'Medium Priority'
+    ELSE 'Low Priority'
+  END AS Priority
+FROM Customers;
+
+
+SELECT   SupplierName,   Country, CASE  WHEN Country = 'USA' THEN 'Domestic' ELSE 'International' END AS SupplierType FROM Suppliers;
+
+SELECT 
+  CustomerName,
+  Country
+FROM Customers
+ORDER BY 
+  CASE 
+    WHEN Country = 'Germany' THEN 1
+    ELSE 2
+  END;
