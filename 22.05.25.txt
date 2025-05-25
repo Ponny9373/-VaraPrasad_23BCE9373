@@ -1,0 +1,197 @@
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY,
+    CustomerName VARCHAR(100),
+    ContactName VARCHAR(100),
+    Address VARCHAR(255),
+    City VARCHAR(100),
+    PostalCode VARCHAR(20),
+    Country VARCHAR(100)
+);
+INSERT INTO Customers (CustomerID, CustomerName, ContactName, Address, City, PostalCode, Country)
+VALUES
+(1, 'Alfreds Futterkiste', 'Maria Anders', 'Obere Str. 57', 'Berlin', '12209', 'Germany'),
+(2, 'Ana Trujillo Emparedados y helados', 'Ana Trujillo', 'Avda. de la Constitución 2222', 'México D.F.', '05021', 'Mexico'),
+(3, 'Antonio Moreno Taquería', 'Antonio Moreno', 'Mataderos 2312', 'México D.F.', '05023', 'Mexico');
+
+CREATE TABLE Suppliers (
+    SupplierID INT PRIMARY KEY,
+    SupplierName VARCHAR(100),
+    ContactName VARCHAR(100),
+    Address VARCHAR(255),
+    City VARCHAR(100),
+    PostalCode VARCHAR(20),
+    Country VARCHAR(100)
+);
+
+INSERT INTO Suppliers (SupplierID, SupplierName, ContactName, Address, City, PostalCode, Country)
+VALUES
+(1, 'Exotic Liquid', 'Charlotte Cooper', '49 Gilbert St.', 'London', 'EC1 4SD', 'UK'),
+(2, 'New Orleans Cajun Delights', 'Shelley Burke', 'P.O. Box 78934', 'New Orleans', '70117', 'USA'),
+(3, 'Grandma Kelly''s Homestead', 'Regina Murphy', '707 Oxford Rd.', 'Ann Arbor', '48104', 'USA');
+
+SELECT * FROM Customers;
+
+SELECT * FROM Suppliers;
+SELECT City FROM Customers
+UNION
+SELECT City FROM Suppliers
+ORDER BY City;
+
+
+SELECT City, Country FROM Customers
+WHERE Country = 'Germany'
+UNION
+SELECT City, Country FROM Suppliers
+WHERE Country = 'Germany'
+ORDER BY City;
+
+SELECT 
+  CustomerName,
+  Country,
+  CASE 
+    WHEN Country = 'Germany' THEN 'Europe'
+    WHEN Country = 'Mexico' THEN 'North America'
+    ELSE 'Other'
+  END AS Region
+FROM Customers;
+
+SELECT 
+  SupplierName,
+  PostalCode,
+  CASE 
+    WHEN PostalCode LIKE 'EC%' THEN 'London Area'
+    WHEN PostalCode BETWEEN '70000' AND '79999' THEN 'Southern USA'
+    WHEN PostalCode BETWEEN '48000' AND '48999' THEN 'Michigan'
+    ELSE 'Other Region'
+  END AS LocationCategory
+FROM Suppliers;
+
+SELECT 
+  CustomerName,
+  City,
+  CASE 
+    WHEN City = 'Berlin' THEN 'High Priority'
+    WHEN City = 'México D.F.' THEN 'Medium Priority'
+    ELSE 'Low Priority'
+  END AS Priority
+FROM Customers;
+
+
+SELECT   SupplierName,   Country, CASE  WHEN Country = 'USA' THEN 'Domestic' ELSE 'International' END AS SupplierType FROM Suppliers;
+
+SELECT 
+  CustomerName,
+  Country
+FROM Customers
+ORDER BY 
+  CASE 
+    WHEN Country = 'Germany' THEN 1
+    ELSE 2
+  END;
+use vit;
+select city, customercount, rank() over (order by customercount desc) as cityrank from (select city, count(*) as customercount from customers group by city) as citycounts;
+
+
+select customername, city from customers c where (select count(*) from suppliers s where s.city = c.city) > 1;
+
+select city, count(*) as totalcount from (select city from customers union all select city from suppliers) as allcities group by city order by totalcount desc limit 1;
+
+
+select customername, city from customers where city not in (select distinct city from suppliers);
+
+
+select suppliername, country, case when (select count(*) from suppliers s2 where s2.country = s1.country) = 1 then 'only supplier' else 'multiple suppliers' end as suppliergroup from suppliers s1;
+
+
+select c.city, count(distinct c.customerid) as customercount, count(distinct s.supplierid) as suppliercount from customers c join suppliers s on c.city = s.city group by c.city;
+
+
+select country from (select country, (select count(*) from customers c where c.country = s.country) as customercount, count(*) as suppliercount from suppliers s group by country) as countrystats where customercount > suppliercount;
+
+
+select c.customername, c.contactname, c.country from customers c where exists (select 1 from suppliers s where s.country = c.country and s.contactname = c.contactname);
+
+
+select city from (select city, count(*) as total from customers group by city order by total desc limit 2) as topcities;
+
+select country from customers group by country having count(*) > 1 and country in (select country from suppliers group by country having count(*) > 1);
+
+select customername, country from customers where country = any (select country from suppliers);
+
+select suppliername, country from suppliers s where not exists (select 1 from customers c where c.country = s.country);
+
+
+select customername, city from customers c where exists (select 1 from suppliers s where s.city = c.city);
+
+
+select customername, country from customers where country = (select country from customers group by country order by count(*) desc limit 1);
+
+select suppliername, city from suppliers where city = (select city from suppliers group by city order by count(*) desc limit 1);
+
+
+
+select customername, country from customers where country in (select country from suppliers group by country having count(*) >= 2);
+
+
+select count(*) from customers where country not in (select country from suppliers);
+
+select customername, country from customers where country = all (select distinct country from suppliers);
+
+
+select suppliername, city from suppliers where city in (select city from customers group by city having count(*) > 1);
+
+select customername, contactname from customers where contactname not in (select contactname from suppliers);
+
+
+select country from customers group by country having count(*) = (select count(*) from suppliers where suppliers.country = customers.country);
+
+
+select customername, country from customers where country in (select country from suppliers group by country having count(*) > (select avg(cnt) from (select count(*) as cnt from suppliers group by country) as avgtable));
+
+select count(distinct city) from (select city from customers intersect select city from suppliers) as sharedcities;
+
+select suppliername, address from suppliers where address in (select address from customers);
+
+
+select customername, country, city from customers where country in (select country from suppliers) and city not in (select city from suppliers where suppliers.country = customers.country);
+
+select city from (select city, sum(count) as total from (select city, count(*) as count from customers group by city union all select city, count(*) from suppliers group by city) as combined group by city order by total desc limit 1) as topcity;
+
+
+
+select count(distinct city) from customers where city in (select city from suppliers);
+
+
+select country, (select count(*) from customers c where c.country = s.country) as customercount, count(*) as suppliercount from suppliers s group by country;
+
+select c.customername, s.suppliername, c.city from customers c inner join suppliers s on c.city = s.city;
+
+select c.customername, s.suppliername, c.city from customers c left join suppliers s on c.city = s.city;
+select s.suppliername, c.customername, s.city from customers c right join suppliers s on c.city = s.city;
+
+
+select c.customername, s.suppliername, coalesce(c.city, s.city) as city from customers c full outer join suppliers s on c.city = s.city;
+
+
+select c.customername, s.suppliername, c.city from customers c left join suppliers s on c.city = s.city
+union
+select c.customername, s.suppliername, s.city from customers c right join suppliers s on c.city = s.city;
+
+select c.city, count(distinct s.supplierid) as suppliercount from customers c left join suppliers s on c.city = s.city group by c.city;
+
+
+select a.customername as customer1, b.customername as customer2, a.country from customers a join customers b on a.country = b.country and a.city <> b.city;
+
+select c.customername, s.suppliername, c.country from customers c join suppliers s on c.country = s.country and c.city <> s.city;
+
+
+select s.country, count(distinct c.customerid) as totalcustomers from suppliers s left join customers c on s.country = c.country group by s.country;
+
+
+select c.customername, s.suppliername, c.country from customers c join suppliers s on c.country = s.country and c.contactname = s.contactname;
+
+
+select s.country from suppliers s join customers c on s.city = c.city and s.country = c.country group by s.country having count(distinct s.city) > 1;
+
+
+
