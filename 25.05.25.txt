@@ -1,0 +1,119 @@
+package jdbc_example;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+public class DB_Connection {
+    public static Connection getConnection() {
+        Connection conn = null;
+        try {
+            // Load JDBC driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Connect to MySQL
+            conn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/testdb",  // Replace 'testdb' with your DB name
+                "root",                                // Replace with your MySQL username
+                "Root"                        // Replace with your MySQL password
+            );
+
+            System.out.println("Connected to MySQL database!");
+        } catch (Exception e) {
+            System.out.println("Connection Error: " + e);
+        }
+        return conn;
+    }
+}
+
+
+
+
+package jdbc_example;
+
+import java.sql.Connection;
+import java.sql.Statement;
+
+public class CreateTable {
+    public static void main(String[] args) {
+        Connection conn = DB_Connection.getConnection();
+
+        try {
+            Statement stmt = conn.createStatement();
+
+            String query = "CREATE TABLE IF NOT EXISTS student (" +
+                           "sl_no INT PRIMARY KEY, " +
+                           "name VARCHAR(100), " +
+                           "email VARCHAR(100))";
+
+            stmt.executeUpdate(query);
+            System.out.println(" Table 'student' created successfully.");
+        } catch (Exception e) {
+            System.out.println(" Error creating table: " + e);
+        }
+    }
+}
+
+
+
+package jdbc_example;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Scanner;
+
+public class InsertAndQuery {
+
+    public static void main(String[] args) {
+
+        try {
+            // Step 1: Load JDBC driver and connect
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection conn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/testdb",  // Replace with your DB name
+                "root",                                // Replace with your DB username
+                "your_password"                        // Replace with your DB password
+            );
+            System.out.println(" Connected to MySQL");
+
+            // Step 2: Insert data
+            Scanner sc = new Scanner(System.in);
+            System.out.print("Enter student sl_no: ");
+            int sl_no = sc.nextInt();
+            sc.nextLine(); // Consume newline
+            System.out.print("Enter student name: ");
+            String name = sc.nextLine();
+            System.out.print("Enter student email: ");
+            String email = sc.nextLine();
+
+            String insertQuery = "INSERT INTO student (sl_no, name, email) VALUES (?, ?, ?)";
+            PreparedStatement ps = conn.prepareStatement(insertQuery);
+            ps.setInt(1, sl_no);
+            ps.setString(2, name);
+            ps.setString(3, email);
+            ps.executeUpdate();
+            System.out.println(" Student inserted successfully!");
+
+            // Step 3: Query and print all students
+            String selectQuery = "SELECT * FROM student";
+            ResultSet rs = conn.prepareStatement(selectQuery).executeQuery();
+
+            System.out.println("\n Student Table:");
+            while (rs.next()) {
+                System.out.println("SL No: " + rs.getInt("sl_no") +
+                                   ", Name: " + rs.getString("name") +
+                                   ", Email: " + rs.getString("email"));
+            }
+
+            // Close resources
+            ps.close();
+            conn.close();
+            sc.close();
+
+        } catch (Exception e) {
+            System.out.println(" Error: " + e.getMessage());
+        }
+    }
+}
+
