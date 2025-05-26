@@ -1,0 +1,155 @@
+package crud_operation;
+
+import java.sql.*;
+
+public class InsertStudent {
+    public static void main(String[] args) {
+        try (Connection conn = new DB_connections().get_connection()) {
+            PreparedStatement ps = conn.prepareStatement("INSERT INTO student (sl_no, name) VALUES (?, ?)");
+            ps.setInt(1, 1);
+            ps.setString(2, "John Doe");
+            int result = ps.executeUpdate();
+            System.out.println(result > 0 ? "Inserted." : "Failed.");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+
+
+
+package crud_operation;
+
+import java.sql.*;
+
+public class ReadStudent {
+    public static void main(String[] args) {
+        try (Connection conn = new DB_connections().get_connection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM student")) {
+            
+            while (rs.next()) {
+                int id = rs.getInt("sl_no");
+                String name = rs.getString("name");
+                System.out.println("ID: " + id + ", Name: " + name);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+
+
+
+
+package crud_operation;
+
+import java.sql.*;
+
+public class UpdateStudent {
+    public static void main(String[] args) {
+        try (Connection conn = new DB_connections().get_connection()) {
+            PreparedStatement ps = conn.prepareStatement("UPDATE student SET name = ? WHERE sl_no = ?");
+            ps.setString(1, "Jane Doe");
+            ps.setInt(2, 1);
+            int result = ps.executeUpdate();
+            System.out.println(result > 0 ? "Updated." : "Not Found.");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+
+
+
+
+package crud_operation;
+
+import java.sql.*;
+
+public class DeleteStudent {
+    public static void main(String[] args) {
+        try (Connection conn = new DB_connections().get_connection()) {
+            PreparedStatement ps = conn.prepareStatement("DELETE FROM student WHERE sl_no = ?");
+            ps.setInt(1, 1);
+            int result = ps.executeUpdate();
+            System.out.println(result > 0 ? "Deleted." : "Not Found.");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+
+
+
+
+package crud_operation;
+
+import java.sql.*;
+
+public class AlterTable {
+    public static void main(String[] args) {
+        try (Connection conn = new DB_connections().get_connection();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.executeUpdate("ALTER TABLE student ADD COLUMN email VARCHAR(100)");
+            System.out.println("Column 'email' added.");
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+
+
+
+
+package crud_operation;
+
+import java.sql.*;
+
+public class ReadWithWhere {
+    public static void main(String[] args) {
+        try (Connection conn = new DB_connections().get_connection()) {
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM student WHERE sl_no = ?");
+            ps.setInt(1, 2);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                System.out.println("Name: " + rs.getString("name"));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+
+
+package crud_operation;
+
+import java.sql.*;
+
+public class ReadAdvanced {
+    public static void main(String[] args) {
+        try (Connection conn = new DB_connections().get_connection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM student")) {
+
+            ResultSetMetaData meta = rs.getMetaData();
+            System.out.println("Columns: " + meta.getColumnCount());
+
+            while (rs.next()) {
+                Date dob = rs.getDate("dob"); // using getDate()
+                Object name = rs.getObject("name"); // using getObject()
+                System.out.println("DOB: " + dob + ", Name: " + name);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+}
+
+
+
+
+
+
