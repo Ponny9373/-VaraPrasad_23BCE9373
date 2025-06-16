@@ -1,16 +1,16 @@
- Find sales where the quantity is more than twice the price.
+1. Find sales where the quantity is more than twice the price.
 db.sales.find({
   $expr: {
     $gt: ["$quantity", { $multiply: [2, "$price"] }]
   }
 })
 
- Find all records that do not have the field size.
+2. Find all records that do not have the field `size`.
 db.sales.find({
   size: { $exists: false }
 })
 
- Find Sales with "Suspicious Quantities" (Divisible by 5 or 7)
+3. Find Sales with "Suspicious Quantities" (Divisible by 5 or 7).
 db.sales.find({
   $expr: {
     $or: [
@@ -20,14 +20,13 @@ db.sales.find({
   }
 })
 
- Get all Cappuccino sales with quantity between 10 and 20. (Intentional mistake: incorrect $lte placement)
+4. Get all Cappuccino sales with quantity between 10 and 20.
 db.sales.find({
   item: "Cappuccino",
-  quantity: { $gte: 10 },
-  $lte: 20
+  quantity: { $gte: 10, $lte: 20 }
 })
 
- Find all sales where the price is greater than the average price of their respective size.
+ 5. Find all sales where the price is greater than the average price of their respective size.
 db.sales.aggregate([
   {
     $group: {
@@ -54,17 +53,20 @@ db.sales.aggregate([
   }
 ])
 
- Find all sales that are either "Grande" or "Tall" but not "Americanos".
+6. Find all sales that are either "Grande" or "Tall" but not "Americanos".
 db.sales.find({
   size: { $in: ["Grande", "Tall"] },
   item: { $ne: "Americanos" }
 })
 
- Calculate the total quantity sold per month in 2022. (Intentional mistake: using $month inside $match)
+7. Calculate the total quantity sold per month in 2022.
 db.sales.aggregate([
   {
     $match: {
-      $month: 2
+      date: {
+        $gte: ISODate("2022-01-01T00:00:00Z"),
+        $lt: ISODate("2023-01-01T00:00:00Z")
+      }
     }
   },
   {
@@ -75,7 +77,7 @@ db.sales.aggregate([
   }
 ])
 
- Find Sales Where the Month is Prime and Quantity is Odd
+ 8. Find Sales Where the Month is Prime and Quantity is Odd.
 db.sales.find({
   $expr: {
     $and: [
@@ -85,18 +87,18 @@ db.sales.find({
   }
 })
 
-Query to find items where the item name starts with "A". (Intentional mistake: wrong field name casing)
+9. Query to find items where the item name starts with "A".
 db.sales.find({
-  Item: { $regex: /^A/, $options: "i" }
+  item: { $regex: /^A/, $options: "i" }
 })
 
-Find all items where price is greater than 10 and size is not 'Short'.
+10. Find all items where price is greater than 10 and size is not 'Short'.
 db.sales.find({
   price: { $gt: 10 },
   size: { $ne: "Short" }
 })
 
- Find the total revenue (price × quantity) for each item, sorted from highest to lowest.
+11. Find the total revenue (price × quantity) for each item, sorted from highest to lowest.
 db.sales.aggregate([
   {
     $group: {
@@ -107,7 +109,7 @@ db.sales.aggregate([
   { $sort: { totalRevenue: -1 } }
 ])
 
- Find Sales Where the Day of Week Matches Quantity's Last Digit
+12. Find Sales Where the Day of Week Matches Quantity's Last Digit.
 db.sales.find({
   $expr: {
     $eq: [
@@ -117,7 +119,7 @@ db.sales.find({
   }
 })
 
-List all items sold in February 2022.
+13. List all items sold in February 2022.
 db.sales.find({
   date: {
     $gte: ISODate("2022-02-01T00:00:00Z"),
